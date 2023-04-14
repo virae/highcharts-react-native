@@ -5,7 +5,8 @@ import {
     StyleSheet,
 } from 'react-native';
 import { WebView } from 'react-native-webview';
-import { Asset, FileSystem } from 'react-native-unimodules';
+import { Asset } from 'expo-asset';
+import * as FileSystem from 'expo-file-system';
 import HighchartsModules from './HighchartsModules';
 
 const win = Dimensions.get('window');
@@ -46,7 +47,7 @@ export default class HighchartsReactNative extends React.PureComponent {
             console.error("Failed to fetch scripts or layout. " + error.message)
         }
     }
-    
+
     getAssetAsString = async (asset) => {
         const downloadedModules = await FileSystem.readDirectoryAsync(FileSystem.cacheDirectory)
         let fileName = 'ExponentAsset-' + asset.hash + '.' + asset.type
@@ -120,7 +121,7 @@ export default class HighchartsReactNative extends React.PureComponent {
         this.setState({ renderedOnce: true });
     }
     /**
-     * Convert JSON to string. When is updated, functions (like events.load) 
+     * Convert JSON to string. When is updated, functions (like events.load)
      * is not wrapped in quotes.
      */
     serialize(chartOptions, isUpdate) {
