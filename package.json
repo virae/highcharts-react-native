@@ -7,7 +7,6 @@
     "url": "git+https://github.com/highcharts/highcharts-react-native-official.git"
   },
   "dependencies": {
-    "metro-config": "^0.60.0",
     "expo-asset": "~8.6.3",
     "expo-file-system": "14.1.0"
   },
