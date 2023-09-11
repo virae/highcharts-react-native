@@ -7,8 +7,8 @@
     "url": "git+https://github.com/highcharts/highcharts-react-native-official.git"
   },
   "dependencies": {
-    "expo-asset": "^8.6.3",
-    "expo-file-system": "^15.4.0",
+    "expo-asset": "~8.10.1",
+    "expo-file-system": "~15.4.4",
     "react-native": "0.72.4"
   },
   "keywords": [
