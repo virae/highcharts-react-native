@@ -2558,7 +2558,14 @@ expo-constants@~13.2.2:
     "@expo/config" "~7.0.0"
     uuid "^3.3.2"
 
-expo-file-system@14.1.0, expo-file-system@~14.1.0:
+expo-file-system@^15.4.0:
+  version "15.4.4"
+  resolved "https://registry.npmjs.org/expo-file-system/-/expo-file-system-15.4.4.tgz#b29e0507b57ee0cc7173cf8844aaf992e411f518"
+  integrity sha512-F0xS88D85F7qVQ61r0qBnzh6VW/s6iIl+VaQEEi2nAIOQHw1JIEj4yCXPLTtbyn5VmArbe2dSL3KYz1V+BLkKA==
+  dependencies:
+    uuid "^3.4.0"
+
+expo-file-system@~14.1.0:
   version "14.1.0"
   resolved "https://registry.npmjs.org/expo-file-system/-/expo-file-system-14.1.0.tgz#4fa410873ef12ac8bec873593f7489f4305a14b8"
   integrity sha512-lJcPGQ8yKXVknVkD5TmcJnR/TpQbEL0JP8hknLejfq3FIqPqI/LBFn31YiP37grxW8lITz1al8pq5T6CSUjAzQ==
