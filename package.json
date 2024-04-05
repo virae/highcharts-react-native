@@ -9,7 +9,7 @@
   "dependencies": {
     "expo-asset": "~8.10.1",
     "expo-file-system": "~15.4.4",
-    "react-native": "0.72.5"
+    "react-native": "0.71.14"
   },
   "keywords": [
     "highcharts",
