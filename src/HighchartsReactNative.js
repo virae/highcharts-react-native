@@ -10,10 +10,11 @@ import * as FileSystem from 'expo-file-system';
 import HighchartsModules from './HighchartsModules';
 
 const win = Dimensions.get('window');
+const path = FileSystem.documentDirectory + 'highcharts-files/highcharts.js';
 const stringifiedScripts = {};
 
 let cdnPath = 'code.highcharts.com/';
-let httpProto = 'http://';
+let httpProto = 'https://';
 
 export default class HighchartsReactNative extends React.PureComponent {
     static getDerivedStateFromProps(props, state) {
@@ -49,8 +50,12 @@ export default class HighchartsReactNative extends React.PureComponent {
     }
 
     getAssetAsString = async (asset) => {
+        const downloadedModules = await FileSystem.readDirectoryAsync(FileSystem.cacheDirectory)
         let fileName = 'ExponentAsset-' + asset.hash + '.' + asset.type
-        await asset.downloadAsync()
+
+        if (!downloadedModules.includes(fileName)) {
+            await asset.downloadAsync()
+        }
 
         return await FileSystem.readAsStringAsync(FileSystem.cacheDirectory + fileName)
     }
@@ -200,6 +205,9 @@ export default class HighchartsReactNative extends React.PureComponent {
                 >
                     <WebView
                         ref={ref => {this.webviewRef = ref}}
+                        onContentProcessDidTerminate={() => {
+                          this.webviewRef?.reload()
+                        }}                        
                         onMessage = {this.props.onMessage ? (event) => this.props.onMessage(event.nativeEvent.data) : () => {}}
                         source = {
                             {
@@ -212,7 +220,7 @@ export default class HighchartsReactNative extends React.PureComponent {
                         allowFileAccess={true}
                         javaScriptEnabled={true}
                         domStorageEnabled={true}
-                        useWebKit={true}
+                        useWebKit={false}
                         scrollEnabled={false}
                         mixedContentMode='always'
                         allowFileAccessFromFileURLs={true}
