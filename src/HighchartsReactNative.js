@@ -34,7 +34,6 @@ export default class HighchartsReactNative extends React.PureComponent {
 
     setHcAssets = async (useCDN) => {
         try {
-            await this.setLayout()
             await this.addScript('highcharts', null, useCDN)
             await this.addScript('highcharts-more', null, useCDN)
             await this.addScript('highcharts-3d', null, useCDN)
@@ -77,14 +76,6 @@ export default class HighchartsReactNative extends React.PureComponent {
             )
             stringifiedScripts[name] = await this.getAssetAsString(script)
         }
-    }
-
-    setLayout = async () => {
-        const indexHtml = Asset.fromModule(require('../highcharts-layout/index.html'))
-
-        this.setState({
-            layoutHTML: await this.getAssetAsString(indexHtml)
-        })
     }
 
     constructor(props) {
@@ -158,7 +149,85 @@ export default class HighchartsReactNative extends React.PureComponent {
     render() {
         if (this.state.hcModulesReady) {
             const setOptions = this.state.setOptions;
-            const runFirst = `
+
+            const layoutHTML = `
+                <html>
+                  <head>
+                    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
+                    <style>
+                        #container {
+                            width:100%;
+                            height:100%;
+                            top:0;
+                            left:0;
+                            right:0;
+                            bottom:0;
+                            position:absolute;
+                            user-select: none;
+                            -webkit-user-select: none;
+                        }
+
+                        * {
+                            -webkit-touch-callout: none;
+                            -webkit-user-select: none; /* Disable selection/copy in UIWebView */
+                            -khtml-user-select: none;
+                            -moz-user-select: none;
+                            -ms-user-select: none;
+                            user-select: none;
+                        }
+                    </style>
+                    <script>
+                        const hcUtils = {
+                            // convert string to JSON, including functions.
+                            parseOptions: function (chartOptions) {
+                                const parseFunction = this.parseFunction;
+
+                                const options = JSON.parse(chartOptions, function (val, key) {
+                                    if (typeof key === 'string' && key.indexOf('function') > -1) {
+                                        return parseFunction(key);
+                                    } else {
+                                        return key;
+                                    }
+                                });
+
+                                return options;
+                            },
+                            // convert funtion string to function
+                            parseFunction: function (fc) {
+
+                                const fcArgs = fc.match(/\((.*?)\)/)[1],
+                                    fcbody = fc.split('{');
+
+                                return new Function(fcArgs, '{' + fcbody.slice(1).join('{'));
+                            }
+                        };
+
+                        // Communication between React app and webview. Receive chart options as string.
+                        document.addEventListener('message', function (data) {
+                            Highcharts.charts[0].update(
+                                hcUtils.parseOptions(data.data),
+                                true,
+                                true,
+                                true
+                            );
+                        });
+
+                        window.addEventListener('message', function (data) {
+                            Highcharts.charts[0].update(
+                                hcUtils.parseOptions(data.data),
+                                true,
+                                true,
+                                true
+                            );
+                        });
+                    </script>
+                  </head>
+                  <body>
+                    <div id="container"></div>
+                  </body>
+                </html>`
+
+                const runFirst = `
                 window.data = \"${this.props.data ? this.props.data : null}\";
                 var modulesList = ${JSON.stringify(this.state.modules)};
                 var readable = ${JSON.stringify(stringifiedScripts)}
@@ -211,7 +280,7 @@ export default class HighchartsReactNative extends React.PureComponent {
                         onMessage = {this.props.onMessage ? (event) => this.props.onMessage(event.nativeEvent.data) : () => {}}
                         source = {
                             {
-                                html: this.state.layoutHTML
+                                html: layoutHTML
                             }
                         }
                         injectedJavaScript={runFirst}
